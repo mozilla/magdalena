@@ -113,7 +113,7 @@ var gSources = {
             return false;
         },
         getValue: function(aProd, aChannel, aCallback, aCBData) {
-            fetchFile("bytypes", aProd.full, aChannel,
+            fetchData("bytypes", gDay, aProd.full, aChannel,
                       function(aData) {
                           if (!aData || !aData[gDay] || !aData[gDay].versions) {
                               aCallback(null, aCBData);
@@ -153,7 +153,7 @@ var gSources = {
             );
         },
         getInfoValue: function(aProd, aChannel, aCallback, aCBData) {
-            fetchFile("bytypes", aProd.full, aChannel,
+            fetchData("bytypes", gDay, aProd.full, aChannel,
                       function(aData) {
                           if (!aData || !aData[gDay] || !aData[gDay].versions)
                               aCallback(null, aCBData);
@@ -176,7 +176,7 @@ var gSources = {
             return false;
         },
         getValue: function(aProd, aChannel, aCallback, aCBData) {
-            fetchFile("bytypes", aProd.full, aChannel,
+            fetchData("bytypes", gDay, aProd.full, aChannel,
                       function(aData) {
                           if (!aData || !aData[gDay] || !aData[gDay].adi)
                               aCallback(null, aCBData);
@@ -201,7 +201,7 @@ var gSources = {
               (aProd.channels[aChannel].graphname ? aProd.channels[aChannel].graphname : aChannel);
         },
         getValue: function(aProd, aChannel, aCallback, aCBData) {
-            fetchFile("bytypes", aProd.full, aChannel,
+            fetchData("bytypes", gDay, aProd.full, aChannel,
                       function(aData) {
                           if (!aData || !aData[gDay] || !aData[gDay].crashes || !aData[gDay].adi) {
                               aCallback(null, aCBData);
@@ -231,7 +231,7 @@ var gSources = {
             return false;
         },
         getValue: function(aProd, aChannel, aCallback, aCBData) {
-            fetchFile("bytypes", aProd.full, aChannel,
+            fetchData("bytypes", gDay, aProd.full, aChannel,
                       function(aData) {
                           if (!aData || !aData[gDay] || !aData[gDay].crashes || !aData[gDay].adi) {
                               aCallback(null, aCBData);
@@ -260,7 +260,7 @@ var gSources = {
             return false;
         },
         getValue: function(aProd, aChannel, aCallback, aCBData) {
-            fetchFile("bytypes", aProd.full, aChannel,
+            fetchData("bytypes", gDay, aProd.full, aChannel,
                       function(aData) {
                           if (!aData || !aData[gDay] || !aData[gDay].crashes || !aData[gDay].adi) {
                               aCallback(null, aCBData);
@@ -292,12 +292,12 @@ var gSources = {
                    "-bcat";
         },
         getValue: function(aProd, aChannel, aCallback, aCBData) {
-            fetchFile("categories", aProd.full, aChannel,
+            fetchData("categories", gDay, aProd.full, aChannel,
                       function(aCData) {
                           if (!aCData || !aCData[gDay] || !aCData[gDay].startup)
                               aCallback(null, aCBData);
                           else
-                              fetchFile("bytypes", aProd.full, aChannel,
+                              fetchData("bytypes", gDay, aProd.full, aChannel,
                                         function(aData) {
                                             if (!aData || !aData[gDay] || !aData[gDay].adi) {
                                                 aCallback(null, aCBData);
@@ -328,7 +328,7 @@ var gSources = {
             return false;
         },
         getValue: function(aProd, aChannel, aCallback, aCBData) {
-            fetchFile("bytypes", aProd.full, aChannel,
+            fetchData("bytypes", gDay, aProd.full, aChannel,
                       function(aData) {
                           if (!aData || !aData[gDay] || !aData[gDay].crashes || !aData[gDay].adi) {
                               aCallback(null, aCBData);
@@ -357,7 +357,7 @@ var gSources = {
             return false;
         },
         getValue: function(aProd, aChannel, aCallback, aCBData) {
-            fetchFile("bytypes", aProd.full, aChannel,
+            fetchData("bytypes", gDay, aProd.full, aChannel,
                       function(aData) {
                           if (!aData || !aData[gDay] || !aData[gDay].crashes || !aData[gDay].adi) {
                               aCallback(null, aCBData);
@@ -387,7 +387,6 @@ window.onload = function() {
     gLog = document.getElementById("debugLog");
 
     $.getJSON(gAnalysisPath + "lastdate", {}, function( data ) {
-        console.log("toto="+ data)
         gDay = data.lastdate;
         document.getElementById("repDay").textContent = gDay;
         processData();
@@ -528,10 +527,11 @@ function infoEvent(event) {
     }
 }
 
-function fetchFile(type, aProd, aChannel, aCallback) {
+function fetchData(type, aDay, aProd, aChannel, aCallback) {
     $.getJSON(gAnalysisPath + type, {
         "product": aProd,
-        "channel": aChannel
+        "channel": aChannel,
+        "date": aDay
     }, aCallback);
 }
 
