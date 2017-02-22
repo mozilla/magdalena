@@ -3,3 +3,4 @@ requests[security]>=2.7.0
 flask>=0.11.1
 flask_sqlalchemy>=0.3.5
 python-dateutil>=2.5.2
+gunicorn==19.6.0
