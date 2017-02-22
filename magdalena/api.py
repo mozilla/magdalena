@@ -4,8 +4,6 @@
 
 from flask import request, jsonify
 from magdalena import models
-from magdalena import crashes_bytype
-from magdalena import crashes_categories
 
 
 def categories():
@@ -33,10 +31,10 @@ def update():
     product = request.args.get('product', 'Firefox')
     channel = request.args.get('channel', 'nightly')
     date = request.args.get('date', 'yesterday')
-    r1 = crashes_bytype.update(product, channel, date)
-    r2 = crashes_categories.update(product, channel, date)
+    r1 = models.Bytype.update(product, channel, date)
+    r2 = models.Categories.update(product, channel, date)
 
-    return jsonify(r1 if r1 == r2 else 'error')
+    return jsonify('ok' if r1 and r2 else 'error')
 
 
 def lastdate():

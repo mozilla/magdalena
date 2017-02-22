@@ -6,10 +6,9 @@ from datetime import timedelta
 from libmozdata import socorro
 from libmozdata import utils
 from magdalena import utils as magutils
-from magdalena import models
 
 
-def update(product, channel, date='yesterday'):
+def get(product, channel, date='yesterday'):
     platforms = socorro.Platforms.get_all()
     yesterday = utils.get_date_ymd(date)
     earliest_mindate = utils.get_date_str(yesterday - timedelta(days=365))
@@ -35,7 +34,7 @@ def update(product, channel, date='yesterday'):
 
     def handler(json, data):
         if json['errors'] or not json['facets']['histogram_date']:
-            return 'error'
+            return []
         else:
             facets = json['facets']['histogram_date'][0]
             total = facets['count']
@@ -71,7 +70,7 @@ def update(product, channel, date='yesterday'):
             hang_plugin *= throttle
             data.extend([content, browser, hang_plugin, oop_plugin, gpu])
 
-    data = [product, channel, utils.get_date_str(yesterday), adi]
+    data = [adi]
     today = yesterday + timedelta(days=1)
     search_date = socorro.SuperSearch.get_search_date(yesterday, today)
     socorro.SuperSearch(params={'product': product,
@@ -84,6 +83,5 @@ def update(product, channel, date='yesterday'):
                                 '_results_number': 0},
                         handler=handler, handlerdata=data).wait()
     data.append(versions)
-    models.Bytype.put(*tuple(data), update=True)
 
-    return 'ok'
+    return data

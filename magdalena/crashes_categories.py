@@ -9,8 +9,6 @@ from libmozdata import socorro
 from libmozdata import utils
 from libmozdata.connection import Query
 from magdalena import utils as magutils
-from magdalena import models
-from magdalena import db
 
 
 # reports to process
@@ -93,7 +91,7 @@ reports = {
 }
 
 
-def update(product, channel, date='yesterday'):
+def get(product, channel, date='yesterday'):
     yesterday = utils.get_date_ymd(date)
     earliest_mindate = utils.get_date_str(yesterday - timedelta(days=365))
     all_versions = magutils.get_all_versions(product, earliest_mindate)
@@ -110,7 +108,7 @@ def update(product, channel, date='yesterday'):
 
     def handler(rep, catname, json, data):
         if json['errors'] or not json['facets']['histogram_date']:
-            return 'error'
+            return {}
         else:
             facets = json['facets']['histogram_date'][0]
             total = facets['count']
@@ -150,26 +148,4 @@ def update(product, channel, date='yesterday'):
 
     socorro.SuperSearch(queries=queries).wait()
 
-    for kind, nums in data.items():
-        if kind == 'shutdownhang':
-            content = 0
-            browser = nums
-            plugin = 0
-        else:
-            content = int(nums.get('content', 0))
-            browser = int(nums.get('browser', 0))
-            plugin = int(nums.get('plugin', 0))
-
-        models.Categories.put(product,
-                              channel,
-                              utils.get_date_str(yesterday),
-                              kind,
-                              content,
-                              browser,
-                              plugin,
-                              update=True,
-                              commit=False)
-
-    db.session.commit()
-
-    return 'ok'
+    return data

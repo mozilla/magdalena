@@ -7,8 +7,7 @@ from datetime import datetime, date, timedelta
 from collections import defaultdict
 from libmozdata import utils
 from magdalena import utils as magutils
-from magdalena import db
-from magdalena import app
+from magdalena import app, db, crashes_bytype, crashes_categories
 
 
 class Categories(db.Model):
@@ -32,14 +31,46 @@ class Categories(db.Model):
         self.plugin = plugin
 
     @staticmethod
+    def put_data(product, channel, date, data, commit=True):
+        if data:
+            for kind, nums in data.items():
+                if kind == 'shutdownhang':
+                    content = 0
+                    browser = nums
+                    plugin = 0
+                else:
+                    content = int(nums.get('content', 0))
+                    browser = int(nums.get('browser', 0))
+                    plugin = int(nums.get('plugin', 0))
+
+                Categories.put(product,
+                               channel,
+                               date,
+                               kind,
+                               content,
+                               browser,
+                               plugin,
+                               update=True,
+                               commit=False)
+            if commit:
+                db.session.commit()
+
+            return True
+        return False
+
+    @staticmethod
+    def update(product, channel, date):
+        data = crashes_categories.get(product, channel, date=date)
+        return Categories.put_data(product, channel, date, data)
+
+    @staticmethod
     def check(product, channel):
         yesterday = date.today() - timedelta(days=1)
         cats = db.session.query(Categories).filter_by(product=product,
                                                       channel=channel,
                                                       date=yesterday)
         if not cats.first():
-            from magdalena import crashes_categories
-            crashes_categories.update(product, channel, date='yesterday')
+            Categories.update(product, channel, utils.get_date(yesterday))
 
     @staticmethod
     def get(product, channel):
@@ -84,19 +115,7 @@ class Categories(db.Model):
     @staticmethod
     def populate(product, channel, data):
         for date, info in data.items():
-            for kind, nums in info.items():
-                if kind == 'shutdownhang':
-                    content = 0
-                    browser = nums
-                    plugin = 0
-                else:
-                    content = int(nums.get('content', 0))
-                    browser = int(nums.get('browser', 0))
-                    plugin = int(nums.get('plugin', 0))
-
-                Categories.put(product, channel, date,
-                               kind, content, browser,
-                               plugin, commit=False)
+            Categories.put_data(product, channel, date, info, commit=False)
 
         db.session.commit()
 
@@ -129,14 +148,22 @@ class Bytype(db.Model):
         self.versions = '|'.join(versions)
 
     @staticmethod
+    def update(product, channel, date):
+        data = crashes_bytype.get(product, channel, date=date)
+        if data:
+            data = (product, channel, date) + tuple(data)
+            Bytype.put(*data, update=True)
+            return True
+        return False
+
+    @staticmethod
     def check(product, channel):
         yesterday = date.today() - timedelta(days=1)
         bts = db.session.query(Bytype).filter_by(product=product,
                                                  channel=channel,
                                                  date=yesterday)
         if not bts.first():
-            from magdalena import crashes_bytype
-            crashes_bytype.update(product, channel, date='yesterday')
+            Bytype.update(product, channel, utils.get_date(yesterday))
 
     @staticmethod
     def get(product, channel):
