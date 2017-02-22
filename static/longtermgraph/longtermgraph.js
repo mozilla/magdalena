@@ -11,7 +11,7 @@ var gBody, gGraph, gSelID,
     gCategoryGraph = false, gCategoryProcess = "browser", gCatData,
     gESData = false;
 
-var gDataPath = "https://release-management-data.herokuapp.com/";
+var gDataPath = "../../";
 
 var gBranches = {
     fxrel: {
@@ -129,9 +129,9 @@ window.onload = function() {
     gBranchSelect = document.getElementById("branch");
     gBranchSelect.onchange = function() {
         location.href = "?" + gBranchSelect.value +
-                     (gADIGraph ? "-blp" :
-                      (gCategoryGraph ? "-" + gCategoryProcess.charAt(0) + "cat" : "")) +
-                     (gESData ? "&source=pg" : "");
+                      (gADIGraph ? "-blp" :
+                       (gCategoryGraph ? "-" + gCategoryProcess.charAt(0) + "cat" : "")) +
+                      (gESData ? "&source=pg" : "");
     }
     var option;
     for (var branchID in gBranches) {
@@ -206,8 +206,8 @@ window.onload = function() {
             document.getElementById("selectorplus").hidden = true;
             var today = new Date();
             gMinDay = (today.getUTCFullYear() - 1) + "-" +
-           (today.getUTCMonth() < 9 ? "0" : "") + (today.getUTCMonth() + 1 ) + "-" +
-           (today.getUTCDate() < 10 ? "0" : "") + today.getUTCDate();
+            (today.getUTCMonth() < 9 ? "0" : "") + (today.getUTCMonth() + 1 ) + "-" +
+            (today.getUTCDate() < 10 ? "0" : "") + today.getUTCDate();
             gType = "office";
         }
         else {
@@ -423,8 +423,8 @@ function graphData(aData) {
                     valueFormatter: function(aMilliseconds) {
                         var dateValue = new Date(aMilliseconds);
                         return dateValue.getUTCFullYear() + "-" +
-               (dateValue.getUTCMonth() < 9 ? "0" : "") + (dateValue.getUTCMonth() + 1 ) + "-" +
-               (dateValue.getUTCDate() < 10 ? "0" : "") + dateValue.getUTCDate();
+                (dateValue.getUTCMonth() < 9 ? "0" : "") + (dateValue.getUTCMonth() + 1 ) + "-" +
+                (dateValue.getUTCDate() < 10 ? "0" : "") + dateValue.getUTCDate();
                     },
                 },
                 y: {
@@ -500,8 +500,8 @@ function fetchFile(type, aCallback) {
 
 function getParameterByName(aName) {
     // from http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
-    name = aName.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-        results = regex.exec(location.search);
+    var name = aName.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
+    var results = regex.exec(location.search);
     return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }

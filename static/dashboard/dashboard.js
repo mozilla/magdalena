@@ -377,9 +377,7 @@ var gSources = {
 
 var gDebug, gLog;
 var gDay;
-//var gAnalysisPath = "https://crash-analysis.mozilla.com/rkaiser/";
-// For debugging/development, this is run on localhost.
-var gAnalysisPath = "https://release-management-data.herokuapp.com/";
+var gAnalysisPath = "../../";
 var gGraphBasePath = gAnalysisPath + "longtermgraph/index.html";
 
 window.onload = function() {
