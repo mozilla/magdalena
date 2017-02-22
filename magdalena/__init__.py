@@ -44,6 +44,18 @@ def update():
     return api.update()
 
 
+@app.route('/lastdate', methods=['GET'])
+@cross_origin()
+def lastdate():
+    from magdalena import api
+    return api.lastdate()
+
+
 @app.route('/longtermgraph/<path:file>')
 def longtermgraph(file):
     return send_from_directory('../static/longtermgraph', file)
+
+
+@app.route('/dashboard/<path:file>')
+def dashboard(file):
+    return send_from_directory('../static/dashboard', file)

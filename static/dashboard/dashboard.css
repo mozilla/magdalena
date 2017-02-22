@@ -1,0 +1,143 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+body {
+  font-family: sans-serif;
+  background-color: #FFFFFF;
+  color: #000000;
+}
+
+h1 {
+  margin-top: .2em;
+  margin-bottom: 0;
+}
+
+#dateLine {
+  margin-top: 0;
+}
+
+.help {
+  color: #808080;
+  font-style: italic;
+  font-size: 75%;
+}
+
+#notification {
+  margin: .5em;
+  padding: .5em;
+  background-color: #FFBB44;
+  color: #000000;
+}
+
+#none, .hidden {
+  display: none;
+}
+
+tr.versions {
+  font-size: 66%;
+  text-align: center;
+}
+
+tr.adi {
+  font-size: 66%;
+}
+
+.adi > .num,
+.rateBrCo > .num {
+  font-size: 100%; /* undo the font size set by .num below */
+}
+
+tr.rateBrCo {
+  font-weight: bold;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0 0;
+}
+
+th {
+  padding: .2em 3px;
+}
+
+td {
+  padding: 1px 3px;
+}
+
+.defaulthide {
+  display: none;
+}
+
+.num {
+  font-size: 80%;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.normal {
+  background-color: #AAEEAA;
+}
+
+.outside {
+  background-color: #EEDD55;
+}
+
+.faroff {
+  background-color: #FFAAAA;
+}
+
+.fail {
+  background-color: #CC80CC;
+}
+
+td > a {
+  display: block;
+  width: 99%;
+}
+
+#infobox {
+  display: none;
+  position: absolute;
+  background-color: #FFFFFF;
+  opacity: 0.9;
+  border-radius: 5px;
+  border: 1px solid #404040;
+  padding: 0 1em;
+}
+
+.info {
+  display: none;
+}
+
+.info.current {
+  display: block;
+}
+
+/* temporary */
+.moredata {
+  display: none;
+}
+
+.limits.low > .high {
+  display: none;
+}
+
+.limits.high > .low {
+  display: none;
+}
+
+#debugLog {
+  display: none;
+}
+
+/* common footer */
+
+#footer {
+  margin-top: 2em;
+  border-top: 1px solid #CCCCCC;
+  font-size: .75em;
+  color: #8080CC;
+}
+
+#footer a:link, #footer a:visited { color: #AA99CC; }
+#footer a:hover, #footer a:active { color: #663399; }

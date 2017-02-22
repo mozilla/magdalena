@@ -184,6 +184,12 @@ class Bytype(db.Model):
             db.session.commit()
 
     @staticmethod
+    def lastdate(product, channel):
+        lastdate = db.session.query(db.func.max(Bytype.date)).scalar()
+        lastdate = utils.get_date_str(lastdate)
+        return {"lastdate": lastdate}
+
+    @staticmethod
     def populate(product, channel, data):
         for date, info in data.items():
             adi = int(info.get('adi', 0))

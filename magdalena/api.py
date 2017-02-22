@@ -37,3 +37,9 @@ def update():
     r2 = crashes_categories.update(product, channel, date)
 
     return jsonify(r1 if r1 == r2 else 'error')
+
+
+def lastdate():
+    product = request.args.get('product', 'Firefox')
+    channel = request.args.get('channel', 'nightly')
+    return jsonify(models.Bytype.lastdate(product, channel))
