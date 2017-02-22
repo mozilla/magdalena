@@ -302,7 +302,7 @@ class Annotations(db.Model):
         db.session.commit()
 
 
-def check_table():
+def fill_tables():
     engine = db.get_engine(app)
     if not engine.dialect.has_table(engine, 'crashes_bytype'):
         import requests
@@ -326,6 +326,3 @@ def check_table():
                     if response.status_code == 200:
                         data = response.json()
                         obj.populate(product, channel, data)
-
-
-check_table()
