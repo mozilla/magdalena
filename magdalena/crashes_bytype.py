@@ -78,6 +78,7 @@ def update(product, channel, date='yesterday'):
                                 'version': versions,
                                 'date': search_date,
                                 'release_channel': channel,
+                                'submitted_from_infobar': '!__true__',
                                 '_histogram.date': ['process_type',
                                                     'plugin_hang'],
                                 '_results_number': 0},
