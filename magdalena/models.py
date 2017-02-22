@@ -9,8 +9,6 @@ from libmozdata import utils
 from magdalena import utils as magutils
 from magdalena import db
 from magdalena import app
-from magdalena import crashes_bytype
-from magdalena import crashes_categories
 
 
 class Categories(db.Model):
@@ -40,6 +38,7 @@ class Categories(db.Model):
                                                       channel=channel,
                                                       date=yesterday)
         if not cats.first():
+            from magdalena import crashes_categories
             crashes_categories.update(product, channel, date='yesterday')
 
     @staticmethod
@@ -136,6 +135,7 @@ class Bytype(db.Model):
                                                  channel=channel,
                                                  date=yesterday)
         if not bts.first():
+            from magdalena import crashes_bytype
             crashes_bytype.update(product, channel, date='yesterday')
 
     @staticmethod
