@@ -13,9 +13,9 @@ def categories():
     return jsonify(api.categories())
 
 
-@app.route('/bytype', methods=['GET'])
-def bytype():
-    return jsonify(api.bytype())
+@app.route('/bytypes', methods=['GET'])
+def bytypes():
+    return jsonify(api.bytypes())
 
 
 @app.route('/annotations', methods=['GET', 'POST'])

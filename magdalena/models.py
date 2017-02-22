@@ -6,10 +6,10 @@ import dateutil.parser
 from datetime import datetime, date, timedelta
 from collections import defaultdict
 from libmozdata import utils
-from . import utils as magutils
-from . import db
-from . import crashes_bytype
-from . import crashes_categories
+from magdalena import utils as magutils
+from magdalena import db
+from magdalena import crashes_bytype
+from magdalena import crashes_categories
 
 
 class Categories(db.Model):

@@ -3,9 +3,9 @@
 # You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from flask import request
-from . import models
-from . import crashes_bytype
-from . import crashes_categories
+from magdalena import models
+from magdalena import crashes_bytype
+from magdalena import crashes_categories
 
 
 def categories():
@@ -14,7 +14,7 @@ def categories():
     return models.Categories.get(product, channel)
 
 
-def bytype():
+def bytypes():
     product = request.args.get('product', 'Firefox')
     channel = request.args.get('channel', 'nightly')
     return models.Bytype.get(product, channel)

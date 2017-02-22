@@ -8,9 +8,9 @@ from datetime import timedelta
 from libmozdata import socorro
 from libmozdata import utils
 from libmozdata.connection import Query
-from . import utils as magutils
-from . import models
-from . import db
+from magdalena import utils as magutils
+from magdalena import models
+from magdalena import db
 
 
 # reports to process

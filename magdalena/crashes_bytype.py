@@ -5,8 +5,8 @@
 from datetime import timedelta
 from libmozdata import socorro
 from libmozdata import utils
-from . import utils as magutils
-from . import models
+from magdalena import utils as magutils
+from magdalena import models
 
 
 def update(product, channel, date='yesterday'):
