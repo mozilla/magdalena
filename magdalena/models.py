@@ -8,6 +8,7 @@ from collections import defaultdict
 from libmozdata import utils
 from magdalena import utils as magutils
 from magdalena import db
+from magdalena import app
 from magdalena import crashes_bytype
 from magdalena import crashes_categories
 
@@ -299,3 +300,32 @@ class Annotations(db.Model):
                                 commit=False)
 
         db.session.commit()
+
+
+def check_table():
+    engine = db.get_engine(app)
+    if not engine.dialect.has_table(engine, 'crashes_bytype'):
+        import requests
+
+        print('Generate tables')
+        products = ['Firefox', 'FennecAndroid']
+        channels = ['nightly', 'aurora', 'beta', 'release']
+        types = {'crashes-bytype': Bytype,
+                 'crashes-categories': Categories,
+                 'annotations': Annotations}
+
+        db.create_all()
+
+        base_url = 'https://crash-analysis.mozilla.com/rkaiser/{}-{}-{}.json'
+        for product in products:
+            for channel in channels:
+                for typ, obj in types.items():
+                    url = base_url.format(product, channel, typ)
+                    print('Get data from {}'.format(url))
+                    response = requests.get(url)
+                    if response.status_code == 200:
+                        data = response.json()
+                        obj.populate(product, channel, data)
+
+
+check_table()
