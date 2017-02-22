@@ -2,7 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this file,
 # You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from flask import Flask, send_from_directory
+from flask import Flask
 from flask_cors import CORS, cross_origin
 from flask_sqlalchemy import SQLAlchemy
 import os
@@ -42,10 +42,3 @@ def annotations():
 def update():
     from magdalena import api
     return api.update()
-
-
-@app.route('/longtermgraph/<path:path>')
-def longtermgraph(path):
-    if not path:
-        path = 'index.html'
-    return send_from_directory('../static/longtermgraph', path)
