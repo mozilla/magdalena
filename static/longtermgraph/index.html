@@ -1,0 +1,39 @@
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this file,
+   - You can obtain one at http://mozilla.org/MPL/2.0/.  -->
+
+<!-- The dygraphs library and its dependencies are MIT/BSD/Apache-licensed. -->
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Crash Rate History</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" href="longtermgraph.css">
+  <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+  <script src="dygraph-combined.js"></script>
+  <script src="longtermgraph.js"></script>
+</head>
+<body>
+<div id="selectorplus">
+<select id="branch"></select>
+<p id="selectorsubline">
+<input type="checkbox" id="adiCheckbox" checked onchange="swapADI(this);">
+<label for="adiCheckbox">Normalize by ADI</label>
+<span id="combineoption">
+| <input type="checkbox" id="combineBrowserCheckbox" checked onchange="swapCombineBrowser(this);">
+<label for="combineBrowserCheckbox">Combine browser+content</label>
+</span><br>
+<a href="http://home.kairo.at/blog/2014-04/how_effective_is_the_stability_program">How to read the graph</a>
+</p>
+</div>
+<h1>Crash Rate History</h1>
+<div id="notification" class="hidden"></div>
+<div id="graphdiv"></div>
+<div id="footer">
+If interested,
+<a href="https://github.com/KaiRo-at/datil/tree/master/longtermgraph">take
+a look at the source</a> of this dashboard.
+</div>
+</body>
+</html>
