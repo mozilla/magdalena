@@ -73,10 +73,16 @@ class Categories(db.Model):
             Categories.update(product, channel, utils.get_date(yesterday))
 
     @staticmethod
-    def get(product, channel):
+    def get(product, channel, date):
         Categories.check(product, channel)
-        cats = db.session.query(Categories).filter_by(product=product,
-                                                      channel=channel)
+        date = magutils.get_date(date)
+        if date:
+            cats = db.session.query(Categories).filter_by(product=product,
+                                                          channel=channel,
+                                                          date=date)
+        else:
+            cats = db.session.query(Categories).filter_by(product=product,
+                                                          channel=channel)
         r = defaultdict(lambda: dict())
         for cat in cats:
             kind = cat.kind
@@ -166,10 +172,16 @@ class Bytype(db.Model):
             Bytype.update(product, channel, utils.get_date(yesterday))
 
     @staticmethod
-    def get(product, channel):
+    def get(product, channel, date):
         Bytype.check(product, channel)
-        bytype = db.session.query(Bytype).filter_by(product=product,
-                                                    channel=channel)
+        date = magutils.get_date(date)
+        if date:
+            bytype = db.session.query(Bytype).filter_by(product=product,
+                                                        channel=channel,
+                                                        date=date)
+        else:
+            bytype = db.session.query(Bytype).filter_by(product=product,
+                                                        channel=channel)
         r = {}
         for bt in bytype:
             date = utils.get_date_str(bt.date)

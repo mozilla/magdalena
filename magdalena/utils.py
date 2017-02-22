@@ -2,6 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this file,
 # You can obtain one at http://mozilla.org/MPL/2.0/.
 
+import dateutil.parser
 from libmozdata import utils
 from libmozdata import socorro
 
@@ -40,3 +41,12 @@ def get_all_versions(product, mindate):
                             handler=handler).wait()
 
     return all_versions
+
+
+def get_date(date):
+    if date:
+        try:
+            return dateutil.parser.parse(date)
+        except:
+            pass
+    return None

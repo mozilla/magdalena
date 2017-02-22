@@ -9,13 +9,15 @@ from magdalena import models
 def categories():
     product = request.args.get('product', 'Firefox')
     channel = request.args.get('channel', 'nightly')
-    return jsonify(models.Categories.get(product, channel))
+    date = request.args.get('date', '')
+    return jsonify(models.Categories.get(product, channel, date))
 
 
 def bytypes():
     product = request.args.get('product', 'Firefox')
     channel = request.args.get('channel', 'nightly')
-    return jsonify(models.Bytype.get(product, channel))
+    date = request.args.get('date', '')
+    return jsonify(models.Bytype.get(product, channel, date))
 
 
 def annotations():
