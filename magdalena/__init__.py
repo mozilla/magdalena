@@ -46,4 +46,6 @@ def update():
 
 @app.route('/longtermgraph/<path:path>')
 def longtermgraph(path):
+    if not path:
+        path = 'index.html'
     return send_from_directory('../static/longtermgraph', path)
