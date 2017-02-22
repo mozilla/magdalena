@@ -30,11 +30,14 @@ def annotations():
 
 
 def update():
-    product = request.args.get('product', 'Firefox')
-    channel = request.args.get('channel', 'nightly')
+    product = request.args.get('product', None)
+    channel = request.args.get('channel', None)
     date = request.args.get('date', 'yesterday')
-    r1 = crashes_bytype.update(product, channel, date)
-    r2 = crashes_categories.update(product, channel, date)
+    if not product or not channel:
+        for p in ['Firefox', 'FennecAndroid']:
+            for c in ['nightly', 'aurora', 'beta', 'release']:
+                r1 = crashes_bytype.update(p, c, date)
+                r2 = crashes_categories.update(p, c, date)
 
     return jsonify(r1 if r1 == r2 else 'error')
 
