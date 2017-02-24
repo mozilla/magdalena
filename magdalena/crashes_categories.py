@@ -110,24 +110,25 @@ def get(product, channel, date='yesterday'):
         if json['errors'] or not json['facets']['histogram_date']:
             return {}
         else:
-            facets = json['facets']['histogram_date'][0]
-            total = facets['count']
-            if rep['process_split']:
-                nonbrowser = 0
-                pt = facets['facets']['process_type']
-                d = defaultdict(lambda: 0)
-                for pt in facets['facets']['process_type']:
-                    ty = pt['term']
-                    N = pt['count']
-                    d[ty] += N * throttle
-                    nonbrowser += N
-                d['browser'] += (total - nonbrowser) * throttle
-                data[catname] = dict(d)
-            else:
-                data[catname] = total * throttle
+            for facets in json['facets']['histogram_date']:
+                total = facets['count']
+                dt = facets['term']
+                if rep['process_split']:
+                    nonbrowser = 0
+                    pt = facets['facets']['process_type']
+                    d = defaultdict(lambda: 0)
+                    for pt in facets['facets']['process_type']:
+                        ty = pt['term']
+                        N = pt['count']
+                        d[ty] += int(N * throttle)
+                        nonbrowser += N
+                    d['browser'] += int((total - nonbrowser) * throttle)
+                    data[dt][catname] = dict(d)
+                else:
+                    data[dt][catname] = int(total * throttle)
 
     queries = []
-    data = {}
+    data = defaultdict(lambda: dict())
     today = yesterday + timedelta(days=1)
     search_date = socorro.SuperSearch.get_search_date(yesterday, today)
     for catname, rep in reports.items():
@@ -148,4 +149,4 @@ def get(product, channel, date='yesterday'):
 
     socorro.SuperSearch(queries=queries).wait()
 
-    return data
+    return dict(data)

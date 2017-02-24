@@ -2,22 +2,37 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this file,
 # You can obtain one at http://mozilla.org/MPL/2.0/.
 
-import dateutil.parser
+import datetime
+import six
+import sys
 from libmozdata import utils
 from libmozdata import socorro
 
 
+def get_products():
+    return ['Firefox', 'FennecAndroid']
+
+
 def check_product(p):
-    return p in ['Firefox', 'FennecAndroid']
+    return p in get_products()
+
+
+def get_channels():
+    return ['nightly', 'aurora', 'beta', 'release']
 
 
 def check_channel(c):
-    return c in ['nightly', 'aurora', 'beta', 'release', 'esr']
+    return c in get_channels()
+
+
+def disp(*args):
+    print(args)
+    sys.stdout.flush()
 
 
 def check_date(d):
-    d = utils.get_date_ymd(d)
-    today = utils.get_date_ymd('today')
+    d = get_date(d)
+    today = get_date('today')
 
     return d <= today
 
@@ -46,7 +61,13 @@ def get_all_versions(product, mindate):
 def get_date(date):
     if date:
         try:
-            return dateutil.parser.parse(date)
+            if isinstance(date, six.string_types):
+                date = utils.get_date_ymd(date)
+                return datetime.date(date.year, date.month, date.day)
+            elif isinstance(date, datetime.date):
+                return date
+            elif isinstance(date, datetime.datetime):
+                return datetime.date(date.year, date.month, date.day)
         except:
             pass
     return None

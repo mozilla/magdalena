@@ -5,6 +5,7 @@
 from flask import Flask, send_from_directory
 from flask_cors import CORS, cross_origin
 from flask_sqlalchemy import SQLAlchemy
+import logging
 import os
 
 
@@ -14,6 +15,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
+log = logging.getLogger(__name__)
 
 
 @app.route('/categories', methods=['GET'])
@@ -35,13 +37,6 @@ def bytypes():
 def annotations():
     from magdalena import api
     return api.annotations()
-
-
-@app.route('/update', methods=['GET'])
-@cross_origin()
-def update():
-    from magdalena import api
-    return api.update()
 
 
 @app.route('/lastdate', methods=['GET'])

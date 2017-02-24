@@ -2,12 +2,47 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this file,
 # You can obtain one at http://mozilla.org/MPL/2.0/.
 
-import dateutil.parser
-from datetime import datetime, date, timedelta
+from datetime import datetime
 from collections import defaultdict
 from libmozdata import utils
 from magdalena import utils as magutils
-from magdalena import app, db, crashes_bytype, crashes_categories
+from magdalena import app, db, log, crashes_bytype, crashes_categories
+
+
+class Lastdate(db.Model):
+    __tablename__ = 'lastdate'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    last = db.Column(db.Date)
+
+    def __init__(self, last):
+        self.last = magutils.get_date(last)
+
+    @staticmethod
+    def get_last():
+        lastdate = db.session.query(Lastdate.last)
+        lastdate = utils.get_date_str(lastdate.first().last)
+        return lastdate
+
+    @staticmethod
+    def get():
+        return {"lastdate": Lastdate.get_last()}
+
+    @staticmethod
+    def put(last, commit=True):
+        lastdate = db.session.query(Lastdate)
+        if lastdate.first():
+            lastdate = lastdate.first()
+            lastdate.last = magutils.get_date(last)
+        else:
+            lastdate = Lastdate(last)
+        db.session.add(lastdate)
+
+        if commit:
+            db.session.commit()
+
+    def __repr__(self):
+        return '<Lastdate last: {}>'.format(self.last)
 
 
 class Categories(db.Model):
@@ -24,34 +59,35 @@ class Categories(db.Model):
     def __init__(self, product, channel, date, kind, content, browser, plugin):
         self.product = product
         self.channel = channel
-        self.date = dateutil.parser.parse(date)
+        self.date = magutils.get_date(date)
         self.kind = kind
         self.content = content
         self.browser = browser
         self.plugin = plugin
 
     @staticmethod
-    def put_data(product, channel, date, data, commit=True):
+    def put_data(product, channel, data, commit=True):
         if data:
-            for kind, nums in data.items():
-                if kind == 'shutdownhang':
-                    content = 0
-                    browser = nums
-                    plugin = 0
-                else:
-                    content = int(nums.get('content', 0))
-                    browser = int(nums.get('browser', 0))
-                    plugin = int(nums.get('plugin', 0))
+            for date, info in data.items():
+                for kind, nums in info.items():
+                    if kind == 'shutdownhang':
+                        content = 0
+                        browser = nums
+                        plugin = 0
+                    else:
+                        content = int(nums.get('content', 0))
+                        browser = int(nums.get('browser', 0))
+                        plugin = int(nums.get('plugin', 0))
 
-                Categories.put(product,
-                               channel,
-                               date,
-                               kind,
-                               content,
-                               browser,
-                               plugin,
-                               update=True,
-                               commit=False)
+                    Categories.put(product,
+                                   channel,
+                                   date,
+                                   kind,
+                                   content,
+                                   browser,
+                                   plugin,
+                                   update=True,
+                                   commit=False)
             if commit:
                 db.session.commit()
 
@@ -59,22 +95,7 @@ class Categories(db.Model):
         return False
 
     @staticmethod
-    def update(product, channel, date):
-        data = crashes_categories.get(product, channel, date=date)
-        return Categories.put_data(product, channel, date, data)
-
-    @staticmethod
-    def check(product, channel):
-        yesterday = date.today() - timedelta(days=1)
-        cats = db.session.query(Categories).filter_by(product=product,
-                                                      channel=channel,
-                                                      date=yesterday)
-        if not cats.first():
-            Categories.update(product, channel, utils.get_date(yesterday))
-
-    @staticmethod
     def get(product, channel, date):
-        Categories.check(product, channel)
         date = magutils.get_date(date)
         if date:
             cats = db.session.query(Categories).filter_by(product=product,
@@ -120,10 +141,7 @@ class Categories(db.Model):
 
     @staticmethod
     def populate(product, channel, data):
-        for date, info in data.items():
-            Categories.put_data(product, channel, date, info, commit=False)
-
-        db.session.commit()
+        Categories.put_data(product, channel, data)
 
 
 class Bytype(db.Model):
@@ -144,7 +162,7 @@ class Bytype(db.Model):
                  browser, hang_plugin, oop_plugin, gpu, versions):
         self.product = product
         self.channel = channel
-        self.date = dateutil.parser.parse(date)
+        self.date = magutils.get_date(date)
         self.adi = adi
         self.content = content
         self.browser = browser
@@ -154,26 +172,16 @@ class Bytype(db.Model):
         self.versions = '|'.join(versions)
 
     @staticmethod
-    def update(product, channel, date):
-        data = crashes_bytype.get(product, channel, date=date)
+    def put_data(product, channel, date, data, commit=True):
         if data:
             data = (product, channel, date) + tuple(data)
-            Bytype.put(*data, update=True)
+            Bytype.put(*data, commit=commit, update=True)
+
             return True
         return False
 
     @staticmethod
-    def check(product, channel):
-        yesterday = date.today() - timedelta(days=1)
-        bts = db.session.query(Bytype).filter_by(product=product,
-                                                 channel=channel,
-                                                 date=yesterday)
-        if not bts.first():
-            Bytype.update(product, channel, utils.get_date(yesterday))
-
-    @staticmethod
     def get(product, channel, date):
-        Bytype.check(product, channel)
         date = magutils.get_date(date)
         if date:
             bytype = db.session.query(Bytype).filter_by(product=product,
@@ -201,9 +209,10 @@ class Bytype(db.Model):
             versions, commit=True, update=False):
         bt = None
         if update:
+            d = magutils.get_date(date)
             bts = db.session.query(Bytype).filter_by(product=product,
                                                      channel=channel,
-                                                     date=date)
+                                                     date=d)
             if bts.first():
                 bt = bts.first()
                 bt.adi = adi
@@ -213,20 +222,15 @@ class Bytype(db.Model):
                 bt.oop_plugin = oop_plugin
                 bt.gpu = gpu
                 bt.versions = '|'.join(versions)
+
         if not bt:
             bt = Bytype(product, channel, date,
                         adi, content, browser,
                         hang_plugin, oop_plugin, gpu, versions)
 
         db.session.add(bt)
-        if commit:
+        if True or commit:
             db.session.commit()
-
-    @staticmethod
-    def lastdate(product, channel):
-        lastdate = db.session.query(db.func.max(Bytype.date)).scalar()
-        lastdate = utils.get_date_str(lastdate)
-        return {"lastdate": lastdate}
 
     @staticmethod
     def populate(product, channel, data):
@@ -347,14 +351,46 @@ class Annotations(db.Model):
         db.session.commit()
 
 
+def update_all(date=None):
+    date = magutils.get_date(date)
+    last = Lastdate.get_last()
+    if date is None:
+        yesterday = utils.get_date('yesterday')
+        if last != yesterday:
+            date = yesterday
+    if date:
+        update_lastdate = True
+        date = utils.get_date(date)
+        log.info('Update all for {}'.format(date))
+
+        for p in magutils.get_products():
+            for c in magutils.get_channels():
+                data = crashes_bytype.get(p, c, date=date)
+                if data:
+                    Bytype.put_data(p, c, date, data, commit=False)
+
+                    data = crashes_categories.get(p, c, date=date)
+                    Categories.put_data(p, c, data, commit=False)
+                else:  # no ADI or no crash data
+                    log.info('No ADI or no crash data for {}::{}'.format(p, c))
+                    update_lastdate = False
+
+        if update_lastdate and \
+           magutils.get_date(last) < magutils.get_date(date):
+            log.info('Lastdate updated to: {}'.format(date))
+            Lastdate.put(date, commit=False)
+
+        db.session.commit()
+
+
 def fill_tables():
     engine = db.get_engine(app)
     if not engine.dialect.has_table(engine, 'crashes_bytype'):
         import requests
 
-        print('Generate tables')
-        products = ['Firefox', 'FennecAndroid']
-        channels = ['nightly', 'aurora', 'beta', 'release']
+        log.info('Generate tables')
+        products = magutils.get_products()
+        channels = magutils.get_channels()
         types = {'crashes-bytype': Bytype,
                  'crashes-categories': Categories,
                  'annotations': Annotations}
@@ -366,8 +402,15 @@ def fill_tables():
             for channel in channels:
                 for typ, obj in types.items():
                     url = base_url.format(product, channel, typ)
-                    print('Get data from {}'.format(url))
+                    log.info('Get data from {}'.format(url))
                     response = requests.get(url)
                     if response.status_code == 200:
                         data = response.json()
                         obj.populate(product, channel, data)
+                        if product == 'Firefox' and \
+                           channel == 'release' and \
+                           typ == 'crashes-bytype':
+                            dates = [magutils.get_date(d) for d in data.keys()]
+                            last = max(dates)
+                            last = utils.get_date_str(last)
+                            Lastdate.put(last)

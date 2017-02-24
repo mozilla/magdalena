@@ -32,43 +32,46 @@ def get(product, channel, date='yesterday'):
                           platforms=platforms)
     adi = list(adi.values())[0]
 
+    if not adi:
+        return []
+
     def handler(json, data):
         if json['errors'] or not json['facets']['histogram_date']:
             return []
         else:
-            facets = json['facets']['histogram_date'][0]
-            total = facets['count']
-            content = 0
-            browser = 0
-            oop_plugin = 0
-            gpu = 0
-            hang_plugin = 0
+            for facets in json['facets']['histogram_date']:
+                total = facets['count']
+                content = 0
+                browser = 0
+                oop_plugin = 0
+                gpu = 0
+                hang_plugin = 0
 
-            for pt in facets['facets']['process_type']:
-                N = pt['count']
-                ty = pt['term']
-                if ty == 'content':
-                    content += N
-                elif ty == 'plugin':
-                    oop_plugin += N
-                elif ty == 'gpu':
-                    gpu += N
+                for pt in facets['facets']['process_type']:
+                    N = pt['count']
+                    ty = pt['term']
+                    if ty == 'content':
+                        content += N
+                    elif ty == 'plugin':
+                        oop_plugin += N
+                    elif ty == 'gpu':
+                        gpu += N
 
-            for ph in facets['facets']['plugin_hang']:
-                N = ph['count']
-                ty = ph['term']
-                if ty == 'T':
-                    hang_plugin += N
+                for ph in facets['facets']['plugin_hang']:
+                    N = ph['count']
+                    ty = ph['term']
+                    if ty == 'T':
+                        hang_plugin += N
 
-            browser = total - (content + oop_plugin + gpu)
-            oop_plugin -= hang_plugin
+                browser = total - (content + oop_plugin + gpu)
+                oop_plugin -= hang_plugin
 
-            browser *= throttle
-            content *= throttle
-            oop_plugin *= throttle
-            gpu *= throttle
-            hang_plugin *= throttle
-            data.extend([content, browser, hang_plugin, oop_plugin, gpu])
+                browser = int(browser * throttle)
+                content = int(content * throttle)
+                oop_plugin = int(oop_plugin * throttle)
+                gpu = int(gpu * throttle)
+                hang_plugin = int(hang_plugin * throttle)
+                data.extend([content, browser, hang_plugin, oop_plugin, gpu])
 
     data = [adi]
     today = yesterday + timedelta(days=1)
