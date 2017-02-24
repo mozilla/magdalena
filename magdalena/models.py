@@ -402,6 +402,7 @@ def fill_tables():
                     url = base_url.format(product, channel, typ)
                     log.info('Get data from {}'.format(url))
                     response = requests.get(url)
+                    log.info('Status is {}'.format(response.status_code))
                     if response.status_code == 200:
                         data = response.json()
                         obj.populate(product, channel, data)
