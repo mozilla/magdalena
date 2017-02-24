@@ -389,8 +389,6 @@ def fill_tables():
         import requests
 
         log.info('Generate tables')
-        products = magutils.get_products()
-        channels = magutils.get_channels()
         types = {'crashes-bytype': Bytype,
                  'crashes-categories': Categories,
                  'annotations': Annotations}
@@ -398,8 +396,8 @@ def fill_tables():
         db.create_all()
 
         base_url = 'https://crash-analysis.mozilla.com/rkaiser/{}-{}-{}.json'
-        for product in products:
-            for channel in channels:
+        for product in magutils.get_products():
+            for channel in magutils.get_channels():
                 for typ, obj in types.items():
                     url = base_url.format(product, channel, typ)
                     log.info('Get data from {}'.format(url))
@@ -407,6 +405,8 @@ def fill_tables():
                     if response.status_code == 200:
                         data = response.json()
                         obj.populate(product, channel, data)
+                        log.info('DB populated for {}::{}'.format(product,
+                                                                  channel))
                         if product == 'Firefox' and \
                            channel == 'release' and \
                            typ == 'crashes-bytype':
