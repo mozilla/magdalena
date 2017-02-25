@@ -229,7 +229,7 @@ class Bytype(db.Model):
                         hang_plugin, oop_plugin, gpu, versions)
 
         db.session.add(bt)
-        if True or commit:
+        if commit:
             db.session.commit()
 
     @staticmethod
