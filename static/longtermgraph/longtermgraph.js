@@ -37,7 +37,7 @@ var gBranches = {
         plugins: true,
         content: true,
         sumContent: true,
-        maxRate: 4,
+        maxRate: 5,
         maxRate_plugin: 0.3,
         maxCrashes: 80e3,
         maxADI: 3.5e6,
