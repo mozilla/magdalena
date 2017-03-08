@@ -16,6 +16,7 @@ db = SQLAlchemy(app)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 log = logging.getLogger(__name__)
+mod_path = os.path.dirname(__file__)
 
 
 @app.route('/categories', methods=['GET'])
@@ -52,5 +53,11 @@ def longtermgraph(file):
 
 
 @app.route('/dashboard/<path:file>')
-def dashboard(file):
+def dashboard_static(file):
     return send_from_directory('../static/dashboard', file)
+
+
+@app.route('/dashboard')
+def dashboard_dyn():
+    from magdalena import dashboard
+    return dashboard.render()

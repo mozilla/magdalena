@@ -118,6 +118,25 @@ class Categories(db.Model):
         return dict(r)
 
     @staticmethod
+    def get_browser_startup(product, channel, date):
+        date = magutils.get_date(date)
+        if date:
+            cats = db.session.query(Categories).filter_by(product=product,
+                                                          channel=channel,
+                                                          kind='startup',
+                                                          date=date,)
+        else:
+            cats = db.session.query(Categories).filter_by(product=product,
+                                                          channel=channel,
+                                                          kind='startup')
+        r = {}
+        for cat in cats:
+            date = utils.get_date_str(cat.date)
+            r[date] = cat.browser
+
+        return dict(r)
+
+    @staticmethod
     def put(product, channel, date, kind, content, browser, plugin,
             commit=True, update=False):
         cat = None
