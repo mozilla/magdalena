@@ -3,6 +3,7 @@
 # You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from flask import render_template, request
+from datetime import timedelta
 from . import utils, models
 
 
@@ -74,6 +75,13 @@ def render():
                                'rateBrCo': b_c_a,
                                'startup': startup_a}}
 
+    start = utils.get_date('2016-12-08')
+    end = utils.get_date('yesterday')
+    duration = (end - start).days
+    dates = [(start + timedelta(days=i)).strftime('%Y-%m-%d')
+             for i in range(duration, -1, -1)]
+
     return render_template('dashboard.html',
                            date=date,
+                           dates=dates,
                            table=table)

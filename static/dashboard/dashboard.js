@@ -100,6 +100,14 @@ var gProductData = {
 
 window.onload = function() {
     make_table(data);
+    $("#date").val(date);
+    $("#date").on("change", function() {
+        var d = $(this).val();
+        if (d) {
+            window.location = "./dashboard?date=" + d;
+        }
+        return false;
+    });
 }
 
 function get_num_style(product, channel, field, x) {

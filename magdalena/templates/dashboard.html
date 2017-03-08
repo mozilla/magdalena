@@ -9,6 +9,7 @@
     <title>Stability Dashboard</title>
     <script>
       var data = {{ table|tojson }};
+      var date = "{{ date }}";
     </script>
     <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
     <script src="dashboard/dashboard.js"></script>
@@ -17,7 +18,13 @@
   <body>
     <div style="width:50%;float:left;">
       <h1>Stability Dashboard</h1>
-      <p id="dateLine">Analyzed date: {{ date }}</p>
+      <p>Analyzed date:
+        <select id="date">
+          {% for d in dates -%}
+          <option value="{{ d }}">{{ d }}</option>
+          {% endfor -%}
+        </select>
+      </p>
       <p class="help">Note: Hovering your mouse over a data cell (or tapping it on a touch device) gives more info about its data.</p>
       <div id="infobox">
         <p class="info versions">Versions currently counted for this channel</p>
