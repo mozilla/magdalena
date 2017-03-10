@@ -8,7 +8,13 @@ from . import utils, models
 
 
 def render():
-    date = utils.get_date(request.args.get('date', 'yesterday'))
+    date = utils.get_date(request.args.get('date', ''))
+    if not date:
+        date = models.Lastdate.get_last()
+    print(date)
+    import sys
+    sys.stdout.flush()
+
     channels = utils.get_channels()
 
     # Firefox

@@ -53,8 +53,12 @@ def longtermgraph(file):
 
 
 @app.route('/dashboard/<path:file>')
-def dashboard_static(file):
-    return send_from_directory('../static/dashboard', file)
+@app.route('/dashboard/')
+def dashboard_static(file=''):
+    for f in ['dashboard.js', 'dashboard.css']:
+        if file.endswith(f):
+            return send_from_directory('../static/dashboard', f)
+    return dashboard_dyn()
 
 
 @app.route('/dashboard')
