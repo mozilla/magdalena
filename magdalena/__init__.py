@@ -61,6 +61,7 @@ def dashboard_static(file=''):
     return dashboard_dyn()
 
 
+@app.route('/')
 @app.route('/dashboard')
 def dashboard_dyn():
     from magdalena import dashboard
