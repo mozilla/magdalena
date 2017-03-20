@@ -21,7 +21,11 @@
       <p>Analyzed date:
         <select id="date">
           {% for d in dates -%}
+          {% if d == date -%}
+          <option value="{{ d }}" selected="selected">{{ d }}</option>
+          {% else -%}
           <option value="{{ d }}">{{ d }}</option>
+          {% endif -%}
           {% endfor -%}
         </select>
       </p>

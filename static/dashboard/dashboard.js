@@ -100,7 +100,6 @@ var gProductData = {
 
 window.onload = function() {
     make_table(data);
-    $("#date").val(date);
     $("#date").on("change", function() {
         var d = $(this).val();
         if (d) {

@@ -11,9 +11,6 @@ def render():
     date = utils.get_date(request.args.get('date', ''))
     if not date:
         date = models.Lastdate.get_last()
-    print(date)
-    import sys
-    sys.stdout.flush()
 
     channels = utils.get_channels()
 
@@ -81,11 +78,13 @@ def render():
                                'rateBrCo': b_c_a,
                                'startup': startup_a}}
 
+    lastdate = models.Lastdate.get_last()
+    lastdate = utils.get_date(lastdate)
     start = utils.get_date('2016-12-08')
-    end = utils.get_date('yesterday')
-    duration = (end - start).days
+    duration = (lastdate - start).days
     dates = [(start + timedelta(days=i)).strftime('%Y-%m-%d')
              for i in range(duration, -1, -1)]
+    date = date.strftime('%Y-%m-%d')
 
     return render_template('dashboard.html',
                            date=date,
