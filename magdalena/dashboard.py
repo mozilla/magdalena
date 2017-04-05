@@ -11,6 +11,7 @@ def render():
     date = utils.get_date(request.args.get('date', ''))
     if not date:
         date = models.Lastdate.get_last()
+        date = utils.get_date(date)
 
     channels = utils.get_channels()
 
