@@ -385,9 +385,10 @@ def update_all(date=None):
         for p in magutils.get_products():
             for c in magutils.get_channels():
                 data = crashes_bytype.get(p, c, date=date)
+                log.info('Data: {}::{}::{}::{}'.format(p, c, date, data))
                 if data:
                     Bytype.put_data(p, c, date, data, commit=False)
-
+                    
                     data = crashes_categories.get(p, c, date=date)
                     Categories.put_data(p, c, data, commit=False)
                 else:  # no ADI or no crash data
