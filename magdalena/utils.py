@@ -58,6 +58,36 @@ def get_all_versions(product, mindate):
     return all_versions
 
 
+def get_versions(date, product, channel):
+    earliest_mindate = utils.get_date_str(date - datetime.timedelta(days=365))
+    all_versions = get_all_versions(product, earliest_mindate)
+    delta = datetime.timedelta(weeks=getMaxBuildAge()[channel])
+    min_version_date = utils.get_date_ymd(date) - delta
+    versions = []
+    throttle = 0
+    last_versions = None
+    last_throttle = 0
+    last_date = utils.get_guttenberg_death()
+    for v in all_versions:
+        if v['product'] == product and v['build_type'] == channel:
+            sd = utils.get_date_ymd(v['start_date'])
+            if sd > last_date:
+                last_date = sd
+                last_versions = v['version']
+                last_throttle = 100. / float(v['throttle'])
+
+            if sd > min_version_date:
+                versions.append(v['version'])
+                if throttle == 0:
+                    throttle = 100. / float(v['throttle'])
+
+    if not versions:
+        versions = last_versions
+        throttle = last_throttle
+
+    return versions, throttle
+
+
 def get_date(date):
     if date:
         try:

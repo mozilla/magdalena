@@ -93,18 +93,7 @@ reports = {
 
 def get(product, channel, date='yesterday'):
     yesterday = utils.get_date_ymd(date)
-    earliest_mindate = utils.get_date_str(yesterday - timedelta(days=365))
-    all_versions = magutils.get_all_versions(product, earliest_mindate)
-    delta = timedelta(weeks=magutils.getMaxBuildAge()[channel])
-    min_version_date = utils.get_date_ymd(yesterday) - delta
-    versions = []
-    throttle = 0
-    for v in all_versions:
-        if v['product'] == product and v['build_type'] == channel and \
-          utils.get_date_ymd(v['start_date']) > min_version_date:
-            versions.append(v['version'])
-            if throttle == 0:
-                throttle = 100. / float(v['throttle'])
+    versions, throttle = magutils.get_versions(yesterday, product, channel)
 
     def handler(rep, catname, json, data):
         if json['errors'] or not json['facets']['histogram_date']:
