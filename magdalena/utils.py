@@ -65,7 +65,7 @@ def get_versions(date, product, channel):
     min_version_date = utils.get_date_ymd(date) - delta
     versions = []
     throttle = 0
-    last_versions = None
+    last_versions = []
     last_throttle = 0
     last_date = utils.get_guttenberg_death()
     for v in all_versions:
@@ -73,7 +73,7 @@ def get_versions(date, product, channel):
             sd = utils.get_date_ymd(v['start_date'])
             if sd > last_date:
                 last_date = sd
-                last_versions = v['version']
+                last_versions = [v['version']]
                 last_throttle = 100. / float(v['throttle'])
 
             if sd > min_version_date:
