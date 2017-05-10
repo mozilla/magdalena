@@ -6,6 +6,7 @@ from datetime import timedelta
 from libmozdata import socorro
 from libmozdata import utils
 from magdalena import utils as magutils
+from magdalena import log
 
 
 def get(product, channel, date='yesterday'):
@@ -33,10 +34,17 @@ def get(product, channel, date='yesterday'):
     adi = list(adi.values())[0]
 
     if not adi:
+        m = 'No ADI for {}::{}::{}, v: {}, p: {}'.format(product,
+                                                         channel,
+                                                         yesterday,
+                                                         ','.join(versions),
+                                                         ','.join(platforms))
+        log.info(m)
         return []
 
     def handler(json, data):
         if json['errors'] or not json['facets']['histogram_date']:
+            log.info('Error with Supersearch query')
             return []
         else:
             for facets in json['facets']['histogram_date']:
