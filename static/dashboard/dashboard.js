@@ -206,7 +206,7 @@ function make_link(parent, text, field, product, channel) {
             chan = (channel === "release") ? "rel" : channel,
             post = (field === "startup") ? "-bcat" : "",
             a = $("<a></a>");
-        a.attr("href", "longtermgraph/index.html?" + pre + chan + post)
+        a.attr("href", "../longtermgraph/index.html?" + pre + chan + post)
          .attr("target", "_blank")
          .text(text);
         parent.append(a);
