@@ -9,7 +9,7 @@ Those graphs use only counts of crashes actually submitted to Socorro crash-stat
 All in all, the graphs only take one unnamed parameter that signifies which graph to show by compounding multiple parts:
 
 * "fx" or "and" or Firefox desktop or Firefox for Android
-* "nightly", "aurora", "beta", or "rel" for the Nightly, Aurora (Developer Edition), Beta, and Release channels
+* "nightly", "beta", or "rel" for the Nightly, Beta, and Release channels
 * Optionally, after a dash ("-"), a type of graph ("bcat", "ccat", "pcat" for category graphs of browser, content, and plugin processes) - if not given, type will be the main graph of crashe rates for the different processes of this product and channel
 * or just "office" for a random product+channel graph formatted for display on office screens
 

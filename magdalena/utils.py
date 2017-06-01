@@ -18,7 +18,7 @@ def check_product(p):
 
 
 def get_channels():
-    return ['nightly', 'aurora', 'beta', 'release']
+    return ['nightly', 'beta', 'release']
 
 
 def check_channel(c):
@@ -40,7 +40,6 @@ def check_date(d):
 def getMaxBuildAge():
     return {'release': 12,
             'beta': 4,
-            'aurora': 9,
             'nightly': 9}
 
 

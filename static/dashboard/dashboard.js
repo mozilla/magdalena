@@ -20,18 +20,6 @@ var gProductData = {
                 plugincrash: { high: .09, max: .2 }, // plugin crashes per 100 ADI
                 pluginhang: { high: .05, max: .2 }, // plugin hangs per 100 ADI
             },
-            aurora: {
-                name: "Dev Ed",
-                fullname: "Developer Edition",
-                versions: { },
-                adi: { low: 1.3e5, min: 1e5 },
-                rateBrCo: { high: 1.5, max: 2.0 },
-                browser: { high: 1.0, max: 1.2 },
-                content: { high: 0.5, max: 0.8 },
-                startup: { high: 0.25, max: 0.4 },
-                plugincrash: { high: .09, max: .2 },
-                pluginhang: { high: .05, max: .2 },
-            },
             beta: {
                 name: "Beta",
                 versions: { },
@@ -71,13 +59,6 @@ var gProductData = {
                 adi: { low: 1.5e3, min: 1e3 },
                 rateBrCo: { high: 5, max: 9 },
                 startup: { high: 2, max: 5 },
-            },
-            aurora: {
-                name: "Aurora",
-                versions: { },
-                adi: { low: 1.5e3, min: 1e3 },
-                rateBrCo: { high: 4, max: 7 },
-                startup: { high: 1.5, max: 3 },
             },
             beta: {
                 name: "Beta",
