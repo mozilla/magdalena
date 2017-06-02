@@ -9,7 +9,6 @@ var gBody, gGraph, gSelID,
     gRawData, gMinDay, gType,
     gUseADI = true, gCombineBrowser = true, gADIGraph = false,
     gCategoryGraph = false, gCategoryProcess = "browser", gCatData,
-    gESData = false;
 
 var gDataPath = "../../";
 
@@ -105,8 +104,7 @@ window.onload = function() {
     gBranchSelect.onchange = function() {
         location.href = "?" + gBranchSelect.value +
                       (gADIGraph ? "-blp" :
-                       (gCategoryGraph ? "-" + gCategoryProcess.charAt(0) + "cat" : "")) +
-                      (gESData ? "&source=pg" : "");
+                       (gCategoryGraph ? "-" + gCategoryProcess.charAt(0) + "cat" : ""));
     }
     var option;
     for (var branchID in gBranches) {
@@ -127,7 +125,6 @@ window.onload = function() {
         gCombineBrowser = gCombineBrowserCheckbox.checked;
         graphData(gRawData);
     }
-    gESData = (getParameterByName("source") != "pg");
 
     if (location.search) {
         var urlAnchor = location.search.substr(1); // Cut off the ? sign.
