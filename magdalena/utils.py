@@ -40,6 +40,7 @@ def check_date(d):
 def getMaxBuildAge():
     return {'release': 12,
             'beta': 4,
+            'aurora': 9,
             'nightly': 9}
 
 
