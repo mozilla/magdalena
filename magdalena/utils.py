@@ -40,6 +40,7 @@ def check_date(d):
 def getMaxBuildAge():
     return {'release': 12,
             'beta': 4,
+            'aurora': 9,
             'nightly': 9}
 
 
@@ -70,15 +71,16 @@ def get_versions(date, product, channel):
     for v in all_versions:
         if v['product'] == product and v['build_type'] == channel:
             sd = utils.get_date_ymd(v['start_date'])
-            if sd > last_date:
-                last_date = sd
-                last_versions = [v['version']]
-                last_throttle = 100. / float(v['throttle'])
+            if sd <= date:
+                if sd > last_date:
+                    last_date = sd
+                    last_versions = [v['version']]
+                    last_throttle = 100. / float(v['throttle'])
 
-            if sd > min_version_date:
-                versions.append(v['version'])
-                if throttle == 0:
-                    throttle = 100. / float(v['throttle'])
+                if sd > min_version_date:
+                    versions.append(v['version'])
+                    if throttle == 0:
+                        throttle = 100. / float(v['throttle'])
 
     if not versions:
         versions = last_versions

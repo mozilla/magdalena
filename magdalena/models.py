@@ -383,7 +383,10 @@ def update_all(date=None):
         log.info('Update all for {}'.format(date))
 
         for p in magutils.get_products():
-            for c in magutils.get_channels():
+            chans = magutils.get_channels()
+            if p == 'Firefox':
+                chans.append('aurora')
+            for c in chans:
                 data = crashes_bytype.get(p, c, date=date)
                 log.info('Data: {}::{}::{}::{}'.format(p, c, date, data))
                 if data:
