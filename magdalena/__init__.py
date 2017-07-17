@@ -19,7 +19,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
-app.secret_key = os.urandom(24)
+app.secret_key = os.environ.get('SESSION_KEY')
 log = logging.getLogger(__name__)
 mod_path = os.path.dirname(__file__)
 
