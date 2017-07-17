@@ -123,7 +123,7 @@ def logout():
         credentials = client.OAuth2Credentials.from_json(credentials)
         credentials.revoke(httplib2.Http())
         flask.session.modified = True
-    return flask.redirect(flask.request.referrer or '/')
+    return send_from_directory('../static/dashboard', 'logout.html')
 
 
 @app.route('/oauth2callback')
