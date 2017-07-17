@@ -125,7 +125,7 @@ def logout():
         credentials = client.OAuth2Credentials.from_json(credentials)
         try:
             credentials.revoke(httplib2.Http())
-        except TokenRevokeError:
+        except client.TokenRevokeError:
             pass
         flask.session.modified = True
 
