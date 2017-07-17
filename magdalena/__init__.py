@@ -32,7 +32,6 @@ def check_credentials():
     credentials = client.OAuth2Credentials.from_json(credentials)
     if credentials.access_token_expired:
         return flask.redirect(flask.url_for('oauth2callback'))
-    # credentials.authorize(httplib2.Http())
 
 
 @app.route('/categories', methods=['GET'])
@@ -115,11 +114,10 @@ def custom_401(error):
 @app.route('/logout')
 def logout():
     # Delete the user's profile and the credentials stored by oauth2.
-    if 'credentials' in flask.session:
-        credentials = flask.session.get('credentials')
+    credentials = flask.session.pop('credentials', None)
+    if credentials:
         credentials = client.OAuth2Credentials.from_json(credentials)
         credentials.revoke(httplib2.Http())
-        flask.session.pop('credentials', None)
         flask.session.modified = True
     return flask.redirect(flask.request.referrer or '/')
 
