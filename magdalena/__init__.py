@@ -32,7 +32,7 @@ def check_credentials():
     credentials = client.OAuth2Credentials.from_json(credentials)
     if credentials.access_token_expired:
         return flask.redirect(flask.url_for('oauth2callback'))
-    credentials.authorize(httplib2.Http())
+    # credentials.authorize(httplib2.Http())
 
 
 @app.route('/categories', methods=['GET'])
@@ -145,7 +145,7 @@ def oauth2callback():
         scope='email',
         cache=AuthCache(),
         redirect_uri=flask.url_for('oauth2callback', _external=True))
-    flow.params['prompt'] = 'consent'
+    #flow.params['prompt'] = 'consent'
 
     if 'code' not in flask.request.args:
         auth_uri = flow.step1_get_authorize_url()
