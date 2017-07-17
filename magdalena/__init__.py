@@ -11,7 +11,7 @@ import os
 import httplib2
 from oauth2client import client, clientsecrets
 import re
-import sys
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
@@ -26,26 +26,17 @@ mod_path = os.path.dirname(__file__)
 
 @app.after_request
 def add_header(r):
-    print('ADD HEADER')
-    sys.stdout.flush()
     r.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     r.headers["Pragma"] = "no-cache"
     return r
 
 def check_credentials():
     if 'credentials' not in flask.session:
-        print('No credentials')
-        sys.stdout.flush()
         return flask.redirect(flask.url_for('oauth2callback'))
-    else:
-        print('Credentials=' + flask.session['credentials'])
-        sys.stdout.flush()
-
+ 
     credentials = flask.session['credentials']
     credentials = client.OAuth2Credentials.from_json(credentials)
     if credentials.access_token_expired:
-        print('Credentials expired')
-        sys.stdout.flush()
         return flask.redirect(flask.url_for('oauth2callback'))
 
 
@@ -128,20 +119,17 @@ def custom_401(error):
 
 @app.route('/logout')
 def logout():
-    print('LOGOUT')
-    sys.stdout.flush()
     # Delete the user's profile and the credentials stored by oauth2.
     credentials = flask.session.pop('credentials', None)
     if credentials:
         credentials = client.OAuth2Credentials.from_json(credentials)
-        credentials.revoke(httplib2.Http())
+        try:
+            credentials.revoke(httplib2.Http())
+        except TokenRevokeError:
+            pass
         flask.session.modified = True
 
-    resp = send_from_directory('../static/dashboard', 'logout.html')
-    #resp.headers['Cache-Control'] = 'no-cache, no-store'
-    #resp.headers['Pragma'] = 'no-cache'
-
-    return resp
+    return send_from_directory('../static/dashboard', 'logout.html')
 
 
 @app.route('/oauth2callback')
@@ -165,7 +153,6 @@ def oauth2callback():
         scope='email',
         cache=AuthCache(),
         redirect_uri=flask.url_for('oauth2callback', _external=True))
-    #flow.params['prompt'] = 'consent'
 
     if 'code' not in flask.request.args:
         auth_uri = flow.step1_get_authorize_url()
