@@ -26,6 +26,8 @@ mod_path = os.path.dirname(__file__)
 
 @app.after_request
 def add_header(r):
+    print('ADD HEADER')
+    sys.stdout.flush()
     r.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     r.headers["Pragma"] = "no-cache"
     return r
@@ -126,6 +128,8 @@ def custom_401(error):
 
 @app.route('/logout')
 def logout():
+    print('LOGOUT')
+    sys.stdout.flush()
     # Delete the user's profile and the credentials stored by oauth2.
     credentials = flask.session.pop('credentials', None)
     if credentials:
