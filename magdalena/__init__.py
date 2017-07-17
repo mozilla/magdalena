@@ -24,6 +24,12 @@ log = logging.getLogger(__name__)
 mod_path = os.path.dirname(__file__)
 
 
+@app.after_request
+def add_header(r):
+    r.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    r.headers["Pragma"] = "no-cache"
+    return r
+
 def check_credentials():
     if 'credentials' not in flask.session:
         print('No credentials')
@@ -128,8 +134,8 @@ def logout():
         flask.session.modified = True
 
     resp = send_from_directory('../static/dashboard', 'logout.html')
-    resp.headers['Cache-Control'] = 'no-cache, no-store'
-    resp.headers['Pragma'] = 'no-cache'
+    #resp.headers['Cache-Control'] = 'no-cache, no-store'
+    #resp.headers['Pragma'] = 'no-cache'
 
     return resp
 
