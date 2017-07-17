@@ -11,7 +11,7 @@ import os
 import httplib2
 from oauth2client import client, clientsecrets
 import re
-
+import sys
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
@@ -26,11 +26,15 @@ mod_path = os.path.dirname(__file__)
 
 def check_credentials():
     if 'credentials' not in flask.session:
+        print('No credentials')
+        sys.stdout.flush()
         return flask.redirect(flask.url_for('oauth2callback'))
 
     credentials = flask.session['credentials']
     credentials = client.OAuth2Credentials.from_json(credentials)
     if credentials.access_token_expired:
+        print('Credentials expired')
+        sys.stdout.flush()
         return flask.redirect(flask.url_for('oauth2callback'))
 
 
