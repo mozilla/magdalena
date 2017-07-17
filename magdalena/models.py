@@ -396,7 +396,8 @@ def update_all(date=None):
                     Categories.put_data(p, c, data, commit=False)
                 else:  # no ADI or no crash data
                     log.info('No ADI or no crash data for {}::{}'.format(p, c))
-                    update_lastdate = False
+                    if c != 'aurora':
+                        update_lastdate = False
 
         if update_lastdate and \
            magutils.get_date(last) < magutils.get_date(date):
