@@ -106,7 +106,7 @@ var gBranches = {
         maxRate: 50,
         maxRate_office: 30,
         maxCrashes: 1e3,
-        maxADI: 15e3,
+        maxADI: 25e3,
     },
 }
 
