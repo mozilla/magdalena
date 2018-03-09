@@ -3,14 +3,15 @@
 # You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from flask import request, jsonify
-from magdalena import models, log
+from . import models
+from .logger import logger
 
 
 def categories():
     product = request.args.get('product', 'Firefox')
     channel = request.args.get('channel', 'nightly')
     date = request.args.get('date', '')
-    log.info('Get categories for {}::{}::{}'.format(product, channel, date))
+    logger.info('Get categories for {}::{}::{}'.format(product, channel, date))
     return jsonify(models.Categories.get(product, channel, date))
 
 
@@ -18,7 +19,7 @@ def bytypes():
     product = request.args.get('product', 'Firefox')
     channel = request.args.get('channel', 'nightly')
     date = request.args.get('date', '')
-    log.info('Get bytypes for {}::{}::{}'.format(product, channel, date))
+    logger.info('Get bytypes for {}::{}::{}'.format(product, channel, date))
     return jsonify(models.Bytype.get(product, channel, date))
 
 
@@ -26,10 +27,10 @@ def annotations():
     if request.method == 'GET':
         product = request.args.get('product', 'Firefox')
         channel = request.args.get('channel', 'nightly')
-        log.info('Get annotations for {}::{}'.format(product, channel))
+        logger.info('Get annotations for {}::{}'.format(product, channel))
         return jsonify(models.Annotations.get(product, channel))
     elif request.method == 'POST':
-        log.info('Post annotations')
+        logger.info('Post annotations')
         return jsonify(models.Annotations.post(request.get_json()))
 
 

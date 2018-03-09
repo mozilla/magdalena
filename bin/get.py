@@ -1,4 +1,4 @@
-modeu# This Source Code Form is subject to the terms of the Mozilla Public
+# This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this file,
 # You can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -17,5 +17,3 @@ for p in products:
             response = requests.get(url.format(m, p, c))
             with open('{}-{}-{}.json'.format(p, c, m), 'w') as Out:
                 json.dump(response.json(), Out)
-    
-            

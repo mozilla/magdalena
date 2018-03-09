@@ -6,7 +6,6 @@ from flask import Flask, send_from_directory
 from flask_cors import CORS, cross_origin
 from flask_sqlalchemy import SQLAlchemy
 import flask
-import logging
 import os
 import httplib2
 from oauth2client import client, clientsecrets
@@ -20,7 +19,6 @@ db = SQLAlchemy(app)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.secret_key = os.environ.get('SESSION_KEY')
-log = logging.getLogger(__name__)
 mod_path = os.path.dirname(__file__)
 
 
@@ -30,10 +28,11 @@ def add_header(r):
     r.headers["Pragma"] = "no-cache"
     return r
 
+
 def check_credentials():
     if 'credentials' not in flask.session:
         return flask.redirect(flask.url_for('oauth2callback'))
- 
+
     credentials = flask.session['credentials']
     credentials = client.OAuth2Credentials.from_json(credentials)
     if credentials.access_token_expired:

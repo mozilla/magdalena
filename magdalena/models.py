@@ -5,8 +5,9 @@
 from datetime import datetime
 from collections import defaultdict
 from libmozdata import utils
-from magdalena import utils as magutils
-from magdalena import app, db, log, crashes_bytype, crashes_categories
+from . import utils as magutils
+from . import app, db, crashes_bytype, crashes_categories
+from .logger import logger
 
 
 class Lastdate(db.Model):
@@ -380,7 +381,7 @@ def update_all(date=None):
     if date:
         update_lastdate = True
         date = utils.get_date(date)
-        log.info('Update all for {}'.format(date))
+        logger.info('Update all for {}'.format(date))
 
         for p in magutils.get_products():
             chans = magutils.get_channels()
@@ -388,20 +389,19 @@ def update_all(date=None):
                 chans.append('aurora')
             for c in chans:
                 data = crashes_bytype.get(p, c, date=date)
-                log.info('Data: {}::{}::{}::{}'.format(p, c, date, data))
+                logger.info('Data: {}::{}::{}::{}'.format(p, c, date, data))
                 if data:
                     Bytype.put_data(p, c, date, data, commit=False)
-                    
                     data = crashes_categories.get(p, c, date=date)
                     Categories.put_data(p, c, data, commit=False)
                 else:  # no ADI or no crash data
-                    log.info('No ADI or no crash data for {}::{}'.format(p, c))
+                    logger.info('No ADI or no crash data for {}::{}'.format(p, c))
                     if c != 'aurora':
                         update_lastdate = False
 
         if update_lastdate and \
            magutils.get_date(last) < magutils.get_date(date):
-            log.info('Lastdate updated to: {}'.format(date))
+            logger.info('Lastdate updated to: {}'.format(date))
             Lastdate.put(date, commit=False)
 
         db.session.commit()
@@ -412,7 +412,7 @@ def fill_tables():
     if not engine.dialect.has_table(engine, 'crashes_bytype'):
         import requests
 
-        log.info('Generate tables')
+        logger.info('Generate tables')
         types = {'crashes-bytype': Bytype,
                  'crashes-categories': Categories,
                  'annotations': Annotations}
@@ -424,14 +424,14 @@ def fill_tables():
             for channel in magutils.get_channels():
                 for typ, obj in types.items():
                     url = base_url.format(product, channel, typ)
-                    log.info('Get data from {}'.format(url))
+                    logger.info('Get data from {}'.format(url))
                     response = requests.get(url)
-                    log.info('Status is {}'.format(response.status_code))
+                    logger.info('Status is {}'.format(response.status_code))
                     if response.status_code == 200:
                         data = response.json()
                         obj.populate(product, channel, data)
-                        log.info('DB populated for {}::{}'.format(product,
-                                                                  channel))
+                        logger.info('DB populated for {}::{}'.format(product,
+                                                                     channel))
                         if product == 'Firefox' and \
                            channel == 'release' and \
                            typ == 'crashes-bytype':
