@@ -385,8 +385,6 @@ def update_all(date=None):
 
         for p in magutils.get_products():
             chans = magutils.get_channels()
-            if p == 'Firefox':
-                chans.append('aurora')
             for c in chans:
                 data = crashes_bytype.get(p, c, date=date)
                 logger.info('Data: {}::{}::{}::{}'.format(p, c, date, data))
@@ -396,8 +394,7 @@ def update_all(date=None):
                     Categories.put_data(p, c, data, commit=False)
                 else:  # no ADI or no crash data
                     logger.info('No ADI or no crash data for {}::{}'.format(p, c))
-                    if c != 'aurora':
-                        update_lastdate = False
+                    update_lastdate = False
 
         if update_lastdate and \
            magutils.get_date(last) < magutils.get_date(date):
