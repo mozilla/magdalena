@@ -6,7 +6,7 @@ import requests
 import json
 
 
-url = 'http://release-management-data.herokuapp.com/{}?product={}&channel={}'
+url = 'http://foo.bar.com/{}?product={}&channel={}'
 products = ['Firefox', 'FennecAndroid']
 channels = ['nightly', 'beta', 'release']
 meths = ['categories', 'bytypes', 'annotations']
